@@ -58,7 +58,7 @@ static uint8_t iBeacon_10 = 0xaa;
  * See the iBeacon specification for further details.
  *****************************************************************************/
 
-static void iBeacon_set_Creator(uint8_t iBeacon_set_handle, bd_addr *addr);
+static void iBeacon_set_Creator(uint8_t* iBeacon_set_handle, bd_addr *addr);
 
 /**************************************************************************//**
  * Application Init.
@@ -117,36 +117,36 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
       Beacon1.addr[5]= 0x11;
 
 
-      iBeacon_set_Creator(iBeacon_1,&Beacon1);
+      iBeacon_set_Creator(&iBeacon_1,&Beacon1);
 
       Beacon1.addr[4]= 0x22;
 
-      iBeacon_set_Creator(iBeacon_2,&Beacon1);
+      iBeacon_set_Creator(&iBeacon_2,&Beacon1);
 
       Beacon1.addr[4]= 0x33;
 
-      iBeacon_set_Creator(iBeacon_3,&Beacon1);
+      iBeacon_set_Creator(&iBeacon_3,&Beacon1);
 
       Beacon1.addr[4]= 0x44;
-      iBeacon_set_Creator(iBeacon_4,&Beacon1);
+      iBeacon_set_Creator(&iBeacon_4,&Beacon1);
 
       Beacon1.addr[4]= 0x55;
-      iBeacon_set_Creator(iBeacon_5,&Beacon1);
+      iBeacon_set_Creator(&iBeacon_5,&Beacon1);
 
       Beacon1.addr[4]= 0x66;
-      iBeacon_set_Creator(iBeacon_6,&Beacon1);
+      iBeacon_set_Creator(&iBeacon_6,&Beacon1);
 
       Beacon1.addr[4]= 0x77;
-      iBeacon_set_Creator(iBeacon_7,&Beacon1);
+      iBeacon_set_Creator(&iBeacon_7,&Beacon1);
 
       Beacon1.addr[4]= 0x88;
-      iBeacon_set_Creator(iBeacon_8,&Beacon1);
+      iBeacon_set_Creator(&iBeacon_8,&Beacon1);
 
       Beacon1.addr[4]= 0x99;
-      iBeacon_set_Creator(iBeacon_9,&Beacon1);
+    iBeacon_set_Creator(&iBeacon_9,&Beacon1);
 
       Beacon1.addr[4]= 0xAA;
-      iBeacon_set_Creator(iBeacon_10,&Beacon1);
+      iBeacon_set_Creator(&iBeacon_10,&Beacon1);
 
 
       break;
@@ -162,7 +162,7 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
   }
 }
 
-static void iBeacon_set_Creator(uint8_t iBeacon_set_handle, bd_addr *addr)
+static void iBeacon_set_Creator(uint8_t* iBeacon_set_handle, bd_addr *addr)
 {
   sl_status_t sc;
   bd_addr out_addr;
@@ -219,11 +219,11 @@ static void iBeacon_set_Creator(uint8_t iBeacon_set_handle, bd_addr *addr)
     };
 
   // Create an advertising set.
-  sc = sl_bt_advertiser_create_set(&iBeacon_set_handle);
+  sc = sl_bt_advertiser_create_set(iBeacon_set_handle);
   app_assert_status(sc);
 
   // Set custom advertising data.
-  sc = sl_bt_advertiser_set_data(iBeacon_set_handle,
+  sc = sl_bt_advertiser_set_data(*iBeacon_set_handle,
                                  0,
                                  sizeof(bcn_beacon_adv_data),
                                  (uint8_t *)(&bcn_beacon_adv_data));
@@ -231,21 +231,21 @@ static void iBeacon_set_Creator(uint8_t iBeacon_set_handle, bd_addr *addr)
 
   // Set advertising parameters. 100ms advertisement interval.
   sc = sl_bt_advertiser_set_timing(
-    iBeacon_set_handle,
+    *iBeacon_set_handle,
     160,     // min. adv. interval (milliseconds * 1.6)
     160,     // max. adv. interval (milliseconds * 1.6)
     0,       // adv. duration
     0);      // max. num. adv. events
   app_assert_status(sc);
 
-   sc = sl_bt_advertiser_set_random_address ( iBeacon_set_handle,3,*addr,&out_addr) ;
+   sc = sl_bt_advertiser_set_random_address ( *iBeacon_set_handle,3,*addr,&out_addr) ;
 
    //app_assert_status(sc);
    app_log("E: 0x%04x", (int)sc);
 
   // Start advertising in user mode and disable connections.
   sc = sl_bt_advertiser_start(
-    iBeacon_set_handle,
+    *iBeacon_set_handle,
     advertiser_user_data,
     advertiser_non_connectable);
   app_assert_status(sc);
